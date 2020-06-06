@@ -6,55 +6,56 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')
 
-dataset = pd.read_csv("winequality-red.csv", sep = ';')
+dataset = pd.read_csv("winequality-white.csv", sep = ';')
 
+#nota: el dataset tiene escalada la calidad de 0 - 10; por lo cual transformo en memoria los datos de la col quality
 #transformar la quality; 1 : buena calidad, 0: mala calidad 
 count = 0
 for row in dataset.quality:
-    if( dataset.quality[count] > 6.5 ):
+    if( dataset.quality[count] >= 6.5 ):
         dataset.quality[count] = 1
+        #print(dataset["sulphates"][count], dataset["alcohol"][count])
     else:
         dataset.quality[count] = 0
     count += 1
 
-x = dataset.iloc[:, [2,3]].values # x:citric acid  y:residual sugar
-y = dataset.iloc[:, 11].values    # quality
+x = dataset.iloc[:, [9,10]].values # x:sulphates  y:alcohol
+y = dataset.iloc[:, 11].values     # quality
 
 
-#dividir test y entrenamiento
+#dividir test y entrenamiento: uso un 20% de test
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.25, random_state=0)
+x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.2, random_state=0)
 
 
-#se escalan los datos debido a que citric acid y residual sugar son muy disitintos
+#se escalan los datos debido a que sulphates y alcohol son muy distintos
 from sklearn.preprocessing import StandardScaler
-sc_X    = StandardScaler()
-x_train = sc_X.fit_transform(x_train)
-x_test  = sc_X.transform(x_test)
+scalar  = StandardScaler()
+x_train = scalar.fit_transform(x_train)
+x_test  = scalar.transform(x_test)
 
 #ajustar modelo 
 from sklearn.linear_model import LogisticRegression
-classifier = LogisticRegression(random_state=0)
-classifier.fit(x_train,y_train)
+clf = LogisticRegression(random_state=0)
+clf.fit(x_train,y_train)
+y_pred = clf.predict(x_test)
 
-yPred= classifier.predict(x_test)
-
-#matrices de confusión
-from sklearn.metrics import confusion_matrix
-cm = confusion_matrix(y_test,yPred) #recibe la 'y' real y la 'y' predecida
-
-#
-from sklearn.metrics import accuracy_score
-accuracy = accuracy_score(y_test,yPred)
+#acurracy
+accuracy = clf.score(x_test, y_test)
 print('accuracy : ', accuracy)
 
-"""
+#datos de pureba: con x:sulphates  y:alcohol; ver las col del dataset winequality-white.csv y
+#tomar valores de esa columna y cambiarlos en data para hacer pruebas
+data = scalar.transform([[0.52, 12.4]]) #buena calidad: 0.52;12.4 mala calidad:0.63, 10.8
+predict = clf.predict(data)
+print(predict)
+
 #representación gráfica de los resultados del algoritmo en el conjunto de entrenamiento
 from matplotlib.colors import ListedColormap
-X_set, y_set = x_train, y_train
+X_set, y_set = x_test, y_test
 X1, X2 = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),
                      np.arange(start = X_set[:, 1].min() - 1, stop = X_set[:, 1].max() + 1, step = 0.01))
-plt.contourf(X1, X2, classifier.predict(np.array([X1.ravel(), X2.ravel()]).T).reshape(X1.shape),
+plt.contourf(X1, X2, clf.predict(np.array([X1.ravel(), X2.ravel()]).T).reshape(X1.shape),
              alpha = 0.75, cmap = ListedColormap(('red', 'green')))
 plt.xlim(X1.min(), X1.max())
 plt.ylim(X2.min(), X2.max())
@@ -63,8 +64,7 @@ for i, j in enumerate(np.unique(y_set)):
                 c = ListedColormap(('red', 'green'))(i), label = j)
 
 plt.title('Regresión Logistica')
-plt.xlabel('Citric acid')
-plt.ylabel('Residual sugar')
+plt.xlabel('Sulphates')
+plt.ylabel('Alcohol')
 plt.legend()
 plt.show()
-"""
