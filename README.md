@@ -4,4 +4,4 @@
 
 ### Wine classification ###
 
-* correr el .py
+* ejecutar el proyecto
