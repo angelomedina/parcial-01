@@ -1,6 +1,6 @@
-# README #
+# Documentación #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+* https://docs.google.com/document/d/1yd9E7EslAPF1JdP58hJC5FI1aVahnGDmb0wD5aEjBrk/edit?usp=sharing
 
 ### What is this repository for? ###
 
