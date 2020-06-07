@@ -4,7 +4,7 @@
 
 ### Wine classification ###
 
-* ejecutar el proyecto
+* ejecutar archivo main.py
 
 ### Link colab parkinson algorithm ###
 
