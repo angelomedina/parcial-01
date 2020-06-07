@@ -5,3 +5,7 @@
 ### Wine classification ###
 
 * ejecutar el proyecto
+
+### Link colab parkinson algorithm ###
+
+* https://colab.research.google.com/drive/1um8_eF_-oBAIHqMzKzBu_F2Ebc4HpmKG?usp=sharing
